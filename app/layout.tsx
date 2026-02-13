@@ -1,0 +1,29 @@
+import type { Metadata } from "next";
+import Script from "next/script";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: process.env.NEXT_PUBLIC_APP_NAME || "Voice Agent Demo",
+  description:
+    process.env.NEXT_PUBLIC_APP_DESCRIPTION || "Talk to our AI agent!",
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body className="bg-background text-foreground font-sans antialiased">
+        {children}
+        {process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && (
+          <Script
+            src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+            strategy="afterInteractive"
+          />
+        )}
+      </body>
+    </html>
+  );
+}
