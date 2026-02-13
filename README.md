@@ -6,7 +6,7 @@ A secure, one-click-deployable template for demoing Retell AI voice agents on yo
 
 > **Before clicking**, you'll need API keys from the services listed in [Prerequisites](#prerequisites) below.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FYOUR_USERNAME%2Fretell-voice-demo&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,SUPABASE_SERVICE_ROLE_KEY,RETELL_API_KEY,RETELL_AGENT_ID,NEXT_PUBLIC_RECAPTCHA_SITE_KEY,RECAPTCHA_SECRET_KEY&envDescription=See%20.env.example%20for%20details&envDefaults=NEXT_PUBLIC_MAX_CALLS_PER_DAY%3D5%2CNEXT_PUBLIC_MAX_CALL_DURATION_SECONDS%3D120%2CNEXT_PUBLIC_APP_NAME%3DVoice%20Agent%20Demo%2CNEXT_PUBLIC_APP_DESCRIPTION%3DTalk%20to%20our%20AI%20agent!)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fapfv-demos%2Fretell-voice-demo&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,SUPABASE_SERVICE_ROLE_KEY,RETELL_API_KEY,RETELL_AGENT_ID,NEXT_PUBLIC_RECAPTCHA_SITE_KEY,RECAPTCHA_SECRET_KEY&envDescription=See%20.env.example%20for%20details&envDefaults=NEXT_PUBLIC_MAX_CALLS_PER_DAY%3D5%2CNEXT_PUBLIC_MAX_CALL_DURATION_SECONDS%3D120%2CNEXT_PUBLIC_APP_NAME%3DVoice%20Agent%20Demo%2CNEXT_PUBLIC_APP_DESCRIPTION%3DTalk%20to%20our%20AI%20agent!)
 
 ---
 
@@ -101,7 +101,7 @@ CREATE POLICY "Users can view own call logs"
 ## Local Development
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/retell-voice-demo.git
+git clone https://github.com/apfv-demos/retell-voice-demo.git
 cd retell-voice-demo
 npm install
 cp .env.example .env.local
