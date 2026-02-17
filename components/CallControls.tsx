@@ -43,7 +43,6 @@ export default function CallControls({
     setTimeRemaining(maxDuration);
   }, []);
 
-  // Initialize Retell client once
   useEffect(() => {
     const client = new RetellWebClient();
 
@@ -81,7 +80,6 @@ export default function CallControls({
     };
   }, [cleanup]);
 
-  // Countdown timer
   useEffect(() => {
     if (callStatus === "active") {
       setTimeRemaining(maxDuration);
@@ -109,7 +107,6 @@ export default function CallControls({
     setCallStatus("connecting");
 
     try {
-      // Get reCAPTCHA token (if configured)
       let recaptchaToken: string | undefined;
       if (recaptchaSiteKey && window.grecaptcha) {
         recaptchaToken = await window.grecaptcha.execute(recaptchaSiteKey, {
@@ -117,7 +114,6 @@ export default function CallControls({
         });
       }
 
-      // Call our API to create the web call
       const response = await fetch("/api/start-call", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -131,7 +127,6 @@ export default function CallControls({
 
       const { access_token } = await response.json();
 
-      // Start the Retell web call (must happen within 30s of token creation)
       await retellClientRef.current!.startCall({
         accessToken: access_token,
       });
@@ -155,23 +150,34 @@ export default function CallControls({
   };
 
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex flex-col items-center gap-4">
       <BlobAnimation isActive={isActive} isTalking={isTalking} />
 
       {isActive && (
-        <p className="text-sm tabular-nums text-neutral-400">
-          {formatTime(timeRemaining)} remaining
-        </p>
+        <div className="w-48 flex flex-col items-center gap-2">
+          <div className="w-full h-1 rounded-full bg-edge overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-1000 ease-linear"
+              style={{
+                width: `${(timeRemaining / maxDuration) * 100}%`,
+                backgroundColor: timeRemaining <= 15 ? "var(--color-danger)" : "var(--color-accent)",
+              }}
+            />
+          </div>
+          <p className="text-xs tabular-nums text-muted tracking-widest">
+            {formatTime(timeRemaining)}
+          </p>
+        </div>
       )}
 
       {error && (
-        <p className="max-w-sm text-center text-sm text-red-400">{error}</p>
+        <p className="max-w-sm text-center text-sm text-danger">{error}</p>
       )}
 
       {callStatus === "idle" && !quotaExhausted && (
         <button
           onClick={startCall}
-          className="rounded-full bg-gradient-to-r from-blue-500 to-purple-600 px-8 py-3 font-medium text-white transition-transform hover:scale-105 active:scale-95"
+          className="rounded-full bg-accent px-10 py-3 text-sm font-medium text-ground transition-all hover:bg-accent-light active:scale-[0.97]"
         >
           Start Call
         </button>
@@ -180,7 +186,7 @@ export default function CallControls({
       {callStatus === "connecting" && (
         <button
           disabled
-          className="rounded-full bg-neutral-700 px-8 py-3 font-medium text-neutral-400"
+          className="rounded-full bg-accent/60 px-10 py-3 text-sm font-medium text-ground animate-pulse"
         >
           Connecting...
         </button>
@@ -190,7 +196,7 @@ export default function CallControls({
         <button
           onClick={stopCall}
           disabled={callStatus === "ending"}
-          className="rounded-full bg-red-600 px-8 py-3 font-medium text-white transition-transform hover:scale-105 active:scale-95 disabled:opacity-50"
+          className="rounded-full border border-danger/40 bg-danger/10 px-10 py-3 text-sm font-medium text-danger transition-all hover:bg-danger/20 active:scale-[0.97] disabled:opacity-50"
         >
           {callStatus === "ending" ? "Ending..." : "End Call"}
         </button>

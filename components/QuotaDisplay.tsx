@@ -9,19 +9,32 @@ export default function QuotaDisplay({
 }) {
   const remaining = Math.max(0, max - used);
   const exhausted = remaining === 0;
+  const pct = ((max - used) / max) * 100;
+
+  if (exhausted) {
+    return (
+      <div className="w-48 flex flex-col items-center gap-2">
+        <div className="w-full h-1 rounded-full bg-edge overflow-hidden">
+          <div className="h-full w-0 rounded-full bg-danger" />
+        </div>
+        <p className="text-xs text-danger">
+          Daily limit reached. Come back tomorrow.
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="text-center">
-      {exhausted ? (
-        <p className="text-sm text-red-400">
-          Daily limit reached. Please try again tomorrow.
-        </p>
-      ) : (
-        <p className="text-sm text-neutral-400">
-          <span className="font-medium text-neutral-200">{remaining}</span> of{" "}
-          {max} calls remaining today
-        </p>
-      )}
+    <div className="w-48 flex flex-col items-center gap-2">
+      <div className="w-full h-1 rounded-full bg-edge overflow-hidden">
+        <div
+          className="h-full rounded-full bg-accent transition-all duration-500"
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <p className="text-xs text-muted">
+        {remaining} of {max} calls remaining
+      </p>
     </div>
   );
 }

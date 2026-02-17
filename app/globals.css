@@ -1,32 +1,191 @@
 @import "tailwindcss";
 
+/* ── Theme ──────────────────────────────────────── */
 @theme {
-  --color-background: #0a0a0a;
-  --color-foreground: #ededed;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-ground: #12110f;
+  --color-surface: #1c1a17;
+  --color-edge: #2e2b26;
+  --color-primary: #ebe5db;
+  --color-muted: #7d7770;
+  --color-accent: #c8956a;
+  --color-accent-light: #dba878;
+  --color-danger: #bf6356;
 
-  --animate-blob-idle: blob-idle 4s ease-in-out infinite;
-  --animate-blob-talking: blob-talking 0.8s ease-in-out infinite;
+  --font-display: var(--font-dm-serif), Georgia, serif;
+  --font-body: var(--font-dm-sans), system-ui, sans-serif;
 }
 
-@keyframes blob-idle {
+/* ── Base ───────────────────────────────────────── */
+body {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(200, 149, 106, 0.04) 0%, transparent 60%),
+    var(--color-ground);
+  color: var(--color-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Blob ───────────────────────────────────────── */
+
+.blob-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  transition: width 700ms ease, height 700ms ease, opacity 700ms ease, background 700ms ease;
+}
+
+.blob-glow[data-state="idle"] {
+  width: 140px;
+  height: 140px;
+  background: #4a4640;
+  opacity: 0.06;
+}
+
+.blob-glow[data-state="listening"] {
+  width: 180px;
+  height: 180px;
+  background: var(--color-accent);
+  opacity: 0.25;
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+
+.blob-glow[data-state="speaking"] {
+  width: 220px;
+  height: 220px;
+  background: var(--color-accent);
+  opacity: 0.4;
+  animation: glow-speak 1.5s ease-in-out infinite;
+}
+
+.blob-core {
+  position: relative;
+  transition: width 700ms ease, height 700ms ease, background 700ms ease, box-shadow 700ms ease;
+}
+
+.blob-core[data-state="idle"] {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #3d3a35 0%, #2a2722 100%);
+  box-shadow: inset 0 -8px 24px rgba(0,0,0,0.15);
+  animation: morph-idle 12s ease-in-out infinite;
+}
+
+.blob-core[data-state="listening"] {
+  width: 148px;
+  height: 148px;
+  background: linear-gradient(135deg, #dba878 0%, #c8956a 40%, #a07348 100%);
+  box-shadow: 0 0 60px rgba(200, 149, 106, 0.2), inset 0 -8px 24px rgba(0,0,0,0.25);
+  animation: morph-listen 8s ease-in-out infinite;
+}
+
+.blob-core[data-state="speaking"] {
+  width: 168px;
+  height: 168px;
+  background: linear-gradient(135deg, #dba878 0%, #c8956a 40%, #a07348 100%);
+  box-shadow: 0 0 80px rgba(200, 149, 106, 0.3), inset 0 -8px 24px rgba(0,0,0,0.25);
+  animation: morph-speak 2s ease-in-out infinite;
+}
+
+/* ── Keyframes: Blob Morphing ───────────────────── */
+
+@keyframes morph-idle {
   0%, 100% {
-    transform: scale(1);
-    opacity: 0.7;
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    transform: rotate(0deg) scale(1);
+  }
+  33% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    transform: rotate(40deg) scale(1.01);
+  }
+  66% {
+    border-radius: 50% 60% 30% 60% / 30% 70% 60% 40%;
+    transform: rotate(80deg) scale(0.99);
+  }
+}
+
+@keyframes morph-listen {
+  0%, 100% {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+    transform: rotate(90deg) scale(1.04);
   }
   50% {
+    border-radius: 50% 60% 30% 60% / 30% 70% 60% 40%;
+    transform: rotate(180deg) scale(1.06);
+  }
+  75% {
+    border-radius: 60% 30% 60% 40% / 70% 40% 50% 60%;
+    transform: rotate(270deg) scale(1.03);
+  }
+}
+
+@keyframes morph-speak {
+  0%, 100% {
+    border-radius: 40% 60% 60% 40% / 60% 40% 60% 40%;
+    transform: rotate(0deg) scale(1);
+  }
+  12.5% {
+    border-radius: 55% 45% 35% 65% / 45% 55% 65% 35%;
+    transform: rotate(45deg) scale(1.1);
+  }
+  25% {
+    border-radius: 35% 65% 55% 45% / 65% 35% 45% 55%;
+    transform: rotate(90deg) scale(1.03);
+  }
+  37.5% {
+    border-radius: 50% 50% 40% 60% / 40% 60% 50% 50%;
+    transform: rotate(135deg) scale(1.12);
+  }
+  50% {
+    border-radius: 45% 55% 65% 35% / 55% 45% 35% 65%;
+    transform: rotate(180deg) scale(1.05);
+  }
+  62.5% {
+    border-radius: 60% 40% 45% 55% / 35% 65% 55% 45%;
+    transform: rotate(225deg) scale(1.14);
+  }
+  75% {
+    border-radius: 38% 62% 50% 50% / 50% 50% 62% 38%;
+    transform: rotate(270deg) scale(1.07);
+  }
+  87.5% {
+    border-radius: 52% 48% 55% 45% / 48% 52% 45% 55%;
+    transform: rotate(315deg) scale(1.11);
+  }
+}
+
+/* ── Keyframes: Glow ────────────────────────────── */
+
+@keyframes glow-pulse {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
     transform: scale(1.05);
-    opacity: 0.9;
   }
 }
 
-@keyframes blob-talking {
+@keyframes glow-speak {
   0%, 100% {
+    opacity: 0.35;
     transform: scale(1);
-    opacity: 0.85;
+  }
+  25% {
+    opacity: 0.55;
+    transform: scale(1.08);
   }
   50% {
-    transform: scale(1.18);
-    opacity: 1;
+    opacity: 0.4;
+    transform: scale(1.02);
+  }
+  75% {
+    opacity: 0.6;
+    transform: scale(1.1);
   }
 }
