@@ -59,12 +59,37 @@ export async function POST(request: Request) {
       );
     }
 
-    // 4. Create Retell web call
+    // 4. Check global spending limit (kill switch)
+    const maxSpend = parseFloat(process.env.MAX_SPEND_DOLLARS || "0");
+    if (maxSpend > 0) {
+      const agentId = process.env.RETELL_AGENT_ID || "";
+      const calls = await retellClient.call.list({
+        filter_criteria: {
+          agent_id: [agentId],
+        },
+        limit: 1000,
+      });
+
+      const totalSpendCents = calls.reduce(
+        (sum, call) => sum + (call.call_cost?.combined_cost ?? 0),
+        0
+      );
+      const totalSpendDollars = totalSpendCents / 100;
+
+      if (totalSpendDollars >= maxSpend) {
+        return NextResponse.json(
+          { error: "Demo paused — spending limit reached", code: "SPEND_LIMIT" },
+          { status: 403 }
+        );
+      }
+    }
+
+    // 5. Create Retell web call
     const webCall = await retellClient.call.createWebCall({
       agent_id: process.env.RETELL_AGENT_ID || "",
     });
 
-    // 5. Log the call
+    // 6. Log the call
     await serviceClient.from("call_logs").insert({
       user_id: user.id,
       user_email: user.email,
@@ -72,7 +97,7 @@ export async function POST(request: Request) {
       status: "initiated",
     });
 
-    // 6. Return access token to client
+    // 7. Return access token to client
     return NextResponse.json({
       access_token: webCall.access_token,
       call_id: webCall.call_id,

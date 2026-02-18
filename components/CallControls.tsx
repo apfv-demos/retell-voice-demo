@@ -27,6 +27,7 @@ export default function CallControls({
   const [callsUsed, setCallsUsed] = useState(initialCallCount);
   const [timeRemaining, setTimeRemaining] = useState(maxDuration);
   const [error, setError] = useState<string | null>(null);
+  const [demoPaused, setDemoPaused] = useState(false);
 
   const retellClientRef = useRef<RetellWebClient | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -122,6 +123,9 @@ export default function CallControls({
 
       if (!response.ok) {
         const data = await response.json();
+        if (data.code === "SPEND_LIMIT") {
+          setDemoPaused(true);
+        }
         throw new Error(data.error || "Failed to start call");
       }
 
@@ -174,13 +178,19 @@ export default function CallControls({
         <p className="max-w-sm text-center text-sm text-danger">{error}</p>
       )}
 
-      {callStatus === "idle" && !quotaExhausted && (
+      {callStatus === "idle" && !quotaExhausted && !demoPaused && (
         <button
           onClick={startCall}
           className="rounded-full bg-accent px-10 py-3 text-sm font-medium text-ground transition-all hover:bg-accent-light active:scale-[0.97]"
         >
           Start Call
         </button>
+      )}
+
+      {demoPaused && (
+        <div className="rounded-full border border-danger/40 bg-danger/10 px-10 py-3 text-sm font-medium text-danger">
+          Demo Paused
+        </div>
       )}
 
       {callStatus === "connecting" && (
